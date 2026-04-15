@@ -57,7 +57,7 @@ def infer_target_column(df, exclude=None):
 uploaded_file = st.file_uploader("CSV-Datei hochladen", type=["csv"])
 
 if uploaded_file is not None:
-    raw = pd.read_csv(uploaded_file)
+    raw = pd.read_csv(uploaded_file, sep=";")
 
     st.subheader("Vorschau der Rohdaten")
     st.dataframe(raw.head(20), use_container_width=True)
