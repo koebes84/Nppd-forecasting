@@ -53,14 +53,23 @@ def infer_target_column(df: pd.DataFrame, exclude: str | None = None):
     return None
 
 
-def prepare_prophet_df(df: pd.DataFrame, date_col: str, target_col: str):
+def prepare_prophet_df(df, date_col, target_col):
     out = df[[date_col, target_col]].copy()
-    out.columns = ['ds', 'y']
-    out['ds'] = pd.to_datetime(out['ds'], errors='coerce', dayfirst=True)
-    if not pd.api.types.is_numeric_dtype(out['y']):
-        out['y'] = pd.to_numeric(out['y'].astype(str).str.replace(',', '.'), errors='coerce')
-    out = out.dropna().sort_values('ds')
-    out = out.groupby('ds', as_index=False)['y'].sum()
+    out.columns = ["ds", "y"]
+
+    out["ds"] = pd.to_datetime(out["ds"], errors="coerce", dayfirst=True)
+
+    out["y"] = (
+        out["y"]
+        .astype(str)
+        .str.replace(".", "", regex=False)
+        .str.replace(",", ".", regex=False)
+    )
+    out["y"] = pd.to_numeric(out["y"], errors="coerce")
+
+    out = out.dropna(subset=["ds", "y"]).sort_values("ds")
+    out = out.groupby("ds", as_index=False)["y"].sum()
+
     return out
 
 
