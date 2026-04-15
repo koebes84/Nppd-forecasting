@@ -56,7 +56,7 @@ def infer_target_column(df: pd.DataFrame, exclude: str | None = None):
 def prepare_prophet_df(df: pd.DataFrame, date_col: str, target_col: str):
     out = df[[date_col, target_col]].copy()
     out.columns = ['ds', 'y']
-    out['ds'] = pd.to_datetime(out['ds'], errors='coerce')
+    out['ds'] = pd.to_datetime(out['ds'], errors='coerce', dayfirst=True)
     if not pd.api.types.is_numeric_dtype(out['y']):
         out['y'] = pd.to_numeric(out['y'].astype(str).str.replace(',', '.'), errors='coerce')
     out = out.dropna().sort_values('ds')
